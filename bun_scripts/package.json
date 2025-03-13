@@ -4,8 +4,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "farm": "bun run plant_and_work.ts",
-    "farm:testnet": "bun run --env-file=.env.testnet plant_and_work.ts",
+    "farm": "bun run farmer.ts",
+    "farm:testnet": "bun run --env-file=.env.testnet farmer.ts",
     "harvest": "bun run harvest.ts",
     "harvest:testnet": "bun run --env-file=.env.testnet harvest.ts"
   },

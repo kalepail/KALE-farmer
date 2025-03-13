@@ -1,147 +1,174 @@
-import { Address, Keypair, scValToNative, xdr } from "@stellar/stellar-sdk/minimal";
-import { AssembledTransaction, basicNodeSigner } from "@stellar/stellar-sdk/minimal/contract";
-import type { Tx } from "@stellar/stellar-sdk/minimal/contract";
-import { Durability, Server } from "@stellar/stellar-sdk/minimal/rpc";
+import {
+  Address,
+  Keypair,
+  scValToNative,
+  xdr,
+} from '@stellar/stellar-sdk/minimal';
+import {
+  AssembledTransaction,
+  basicNodeSigner,
+} from '@stellar/stellar-sdk/minimal/contract';
+import type { Tx } from '@stellar/stellar-sdk/minimal/contract';
+import { Durability, Server } from '@stellar/stellar-sdk/minimal/rpc';
 import { Client } from 'kale-sc-sdk';
 import { version } from './package.json';
 
 const INDEX_filename = Bun.env.ENV === 'mainnet' ? '.INDEX' : '.INDEX.testnet';
 
 export interface Block {
-    timestamp?: bigint,
-    min_gap: bigint,
-    min_stake: bigint,
-    min_zeros: bigint,
-    max_gap: bigint,
-    max_stake: bigint,
-    max_zeros: bigint,
-    entropy?: Buffer,
-    staked_total?: bigint,
-    normalized_total?: bigint,
+  timestamp?: bigint;
+  min_gap: bigint;
+  min_stake: bigint;
+  min_zeros: bigint;
+  max_gap: bigint;
+  max_stake: bigint;
+  max_zeros: bigint;
+  entropy?: Buffer;
+  staked_total?: bigint;
+  normalized_total?: bigint;
 }
 
 export interface Pail {
-    sequence: bigint,
-    gap: bigint | undefined,
-    stake: bigint,
-    zeros: bigint | undefined,
+  sequence: bigint;
+  gap: bigint | undefined;
+  stake: bigint;
+  zeros: bigint | undefined;
 }
 
 export const rpc = new Server(Bun.env.RPC_URL);
-export const farmerSigner = basicNodeSigner(Keypair.fromSecret(Bun.env.FARMER_SK), Bun.env.NETWORK_PASSPHRASE)
+export const farmerSigner = basicNodeSigner(
+  Keypair.fromSecret(Bun.env.FARMER_SK),
+  Bun.env.NETWORK_PASSPHRASE
+);
 
 export const contract = new Client({
-    rpcUrl: Bun.env.RPC_URL,
-    contractId: Bun.env.CONTRACT_ID,
-    networkPassphrase: Bun.env.NETWORK_PASSPHRASE,
-})
+  rpcUrl: Bun.env.RPC_URL,
+  contractId: Bun.env.CONTRACT_ID,
+  networkPassphrase: Bun.env.NETWORK_PASSPHRASE,
+});
 
-export async function send<T>(txn: AssembledTransaction<T> | Tx | string, fee?: number) {
-    const data = new FormData();
+export async function send<T>(
+  txn: AssembledTransaction<T> | Tx | string,
+  fee?: number
+) {
+  const data = new FormData();
 
-    if (txn instanceof AssembledTransaction) {
-        txn = txn.built!.toXDR()
-    } else if (typeof txn !== 'string') {
-        txn = txn.toXDR()
-    }
+  if (txn instanceof AssembledTransaction) {
+    txn = txn.built!.toXDR();
+  } else if (typeof txn !== 'string') {
+    txn = txn.toXDR();
+  }
 
-    data.set('xdr', txn);
+  data.set('xdr', txn);
 
-    if (fee)
-        data.set('fee', fee.toString());
+  if (fee) data.set('fee', fee.toString());
 
-    return fetch(Bun.env.LAUNCHTUBE_URL, {
-        method: 'POST',
-        headers: {
-            authorization: `Bearer ${Bun.env.LAUNCHTUBE_JWT}`,
-            'X-Client-Name': 'rust-kale-farmer',
-            'X-Client-Version': version
-        },
-        body: data
-    }).then(async (res) => {
-        if (res.ok)
-            return res.json()
-        else throw await res.text()
-    })
+  return fetch(Bun.env.LAUNCHTUBE_URL, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${Bun.env.LAUNCHTUBE_JWT}`,
+      'X-Client-Name': 'rust-kale-farmer',
+      'X-Client-Version': version,
+    },
+    body: data,
+  }).then(async (res) => {
+    if (res.ok) return res.json();
+    else throw await res.text();
+  });
 }
 
 export async function getIndex() {
-    let index: number = 0;
+  let index: number = 0;
 
-    await rpc.getContractData(
-        Bun.env.CONTRACT_ID,
-        xdr.ScVal.scvLedgerKeyContractInstance()
-    ).then(({ val }) =>
-        val.contractData()
-            .val()
-            .instance()
-            .storage()
-    ).then((storage) => {
-        return storage?.map((entry) => {
-            const key: string = scValToNative(entry.key())[0]
+  await rpc
+    .getContractData(
+      Bun.env.CONTRACT_ID,
+      xdr.ScVal.scvLedgerKeyContractInstance()
+    )
+    .then(({ val }) => val.contractData().val().instance().storage())
+    .then((storage) => {
+      return storage?.map((entry) => {
+        const key: string = scValToNative(entry.key())[0];
 
-            if (key === 'FarmIndex') {
-                index = entry.val().u32()
-            }
-        })
-    })
+        if (key === 'FarmIndex') {
+          index = entry.val().u32();
+        }
+      });
+    });
 
-    return index;
+  return index;
 }
 
 export async function getBlock(index: number) {
-    let block: Block | undefined;
+  let block: Block | undefined;
 
-    await rpc.getContractData(Bun.env.CONTRACT_ID, xdr.ScVal.scvVec([
+  await rpc
+    .getContractData(
+      Bun.env.CONTRACT_ID,
+      xdr.ScVal.scvVec([
         xdr.ScVal.scvSymbol('Block'),
-        xdr.ScVal.scvU32(Number(index))
-    ]), Durability.Temporary)
-        .then(({ val }) => {
-            block = scValToNative(val.contractData().val())
-        })
+        xdr.ScVal.scvU32(Number(index)),
+      ]),
+      Durability.Temporary
+    )
+    .then(({ val }) => {
+      block = scValToNative(val.contractData().val());
+    });
 
-    return block
+  return block;
 }
 
 export async function getPail(index: number) {
-    let pail: Pail | undefined;
+  let pail: Pail | undefined;
 
-    await rpc.getContractData(Bun.env.CONTRACT_ID, xdr.ScVal.scvVec([
+  await rpc
+    .getContractData(
+      Bun.env.CONTRACT_ID,
+      xdr.ScVal.scvVec([
         xdr.ScVal.scvSymbol('Pail'),
         Address.fromString(Bun.env.FARMER_PK).toScVal(),
-        xdr.ScVal.scvU32(Number(index))
-    ]), Durability.Temporary)
-        .then(({ val }) => {
-            pail = scValToNative(val.contractData().val())
-        })
+        xdr.ScVal.scvU32(Number(index)),
+      ]),
+      Durability.Temporary
+    )
+    .then(({ val }) => {
+      pail = scValToNative(val.contractData().val());
+    });
 
-    return pail
+  return pail;
 }
 
 export async function getContractData() {
-    let index: number = 0;
-    let block: Block | undefined;
-    let pail: Pail | undefined;
+  let index: number = 0;
+  let block: Block | undefined;
+  let pail: Pail | undefined;
 
-    try {
-        index = await getIndex();
-        block = await getBlock(index);
-        pail = await getPail(index);
-    } catch { }
+  try {
+    index = await getIndex();
+    block = await getBlock(index);
+    pail = await getPail(index);
+  } catch {}
 
-    return { index, block, pail }
+  return { index, block, pail };
 }
 
 export async function readINDEX() {
-    const file = Bun.file(INDEX_filename)
+  const file = Bun.file(INDEX_filename);
 
-    if (await file.exists()) {
-        return file.text().then((index) => Number(index ?? 0));
-    } else {
-        return 0;
-    }
+  if (await file.exists()) {
+    return file.text().then((index) => Number(index ?? 0));
+  } else {
+    return 0;
+  }
 }
 
 export async function writeINDEX(index: number) {
-    return Bun.write(INDEX_filename, index.toString());
+  return Bun.write(INDEX_filename, index.toString());
 }
+
+// New utility functions with side effects
+export const log = (...args: any[]) => console.log(...args);
+export const logError = (...args: any[]) => console.error(...args);
+export const exit = (code: number) => process.exit(code);
+export const spawn = (args: string[], onMessage: (message: any) => void) =>
+  Bun.spawn(args, { ipc: onMessage, stdout: 'pipe' });
