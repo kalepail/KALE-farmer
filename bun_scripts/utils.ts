@@ -93,12 +93,12 @@ export async function getBlock(index: number) {
             // 'Key size', res.key.toXDR().length,
             // 'Val size', res.val.toXDR().length,
 
-            'Contract data', 'Key', res.key.contractData().key().toXDR().length,
-            'Value', res.val.contractData().val().toXDR().length,
+            res.key.contractData().key().toXDR().length,
+            res.val.contractData().val().toXDR().length,
             // res.val.contractData().key().toXDR().length,
             // res.val.contractData().val().toXDR().length,
         );
-            
+ 
             block = scValToNative(res.val.contractData().val())
         })
 
