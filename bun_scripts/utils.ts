@@ -46,34 +46,34 @@ export async function send<T>(txn: AssembledTransaction<T> | Tx | string, fee?: 
 }
 
 export async function getIndex() {
-    let index: number = 0;
+  let index: number = 0;
 
-    await rpc.getContractData(
-        Bun.env.CONTRACT_ID,
-        xdr.ScVal.scvLedgerKeyContractInstance()
-    ).then(({ val }) =>
-        val.contractData()
-            .val()
-            .instance()
-            .storage()
-    ).then((storage) => {
-        return storage?.map((entry) => {
-            const key: string = scValToNative(entry.key())[0]
+  await rpc.getContractData(
+      Bun.env.CONTRACT_ID,
+      xdr.ScVal.scvLedgerKeyContractInstance()
+  ).then(({ val }) =>
+      val.contractData()
+          .val()
+          .instance()
+          .storage()
+  ).then((storage) => {
+      return storage?.map((entry) => {
+          const key: string = scValToNative(entry.key())[0]
 
-            if (key === 'FarmIndex') {
-                index = entry.val().u32()
-            }
+          if (key === 'FarmIndex') {
+              index = entry.val().u32()
+          }
 
-            // if (key === 'FarmBlock') {
-            //     console.log(
-            //         'FarmBlock',
-            //         scValToNative(entry.val())
-            //     );
-            // }
-        })
-    })
+          // if (key === 'FarmBlock') {
+          //     console.log(
+          //         'FarmBlock',
+          //         scValToNative(entry.val())
+          //     );
+          // }
+      })
+  })
 
-    return index;
+  return index;
 }
 
 export async function getBlock(index: number) {
