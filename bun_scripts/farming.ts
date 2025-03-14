@@ -223,7 +223,7 @@ export const handleStream: HandleStreamFn = async (
     );
     return { ...state, hasWorked: true };
   } catch (err) {
-    log(err);
+    log('Error handling stream', err);
     return state; // Ignore parsing errors, keep state unchanged
   }
 };

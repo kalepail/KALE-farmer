@@ -92,8 +92,10 @@ export async function getBlock(index: number) {
 
                 // 'Key size', res.key.toXDR().length,
                 // 'Val size', res.val.toXDR().length,
-
+                'Contract data',
+                'key',
                 res.key.contractData().key().toXDR().length,
+                'value',
                 res.val.contractData().val().toXDR().length,
                 // res.val.contractData().key().toXDR().length,
                 // res.val.contractData().val().toXDR().length,
@@ -129,7 +131,15 @@ export async function getContractData() {
         index = await getIndex();
         block = await getBlock(index);
         pail = await getPail(index);
-    } catch { }
+    } catch {
+      if(!pail){
+        console.log("Fetching a new pail...")
+      }
+      else {
+        console.error("Error getting contract data", index, block, pail)
+      }
+
+     }
 
     return { index, block, pail }
 }
