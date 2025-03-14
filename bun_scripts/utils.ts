@@ -99,21 +99,19 @@ export async function getBlock(index: number) {
       Durability.Temporary
     )
     .then((res) => {
+      // res.val.toXDR('base64')
+
+      // 'Block key size', val.contractData().key().toXDR().length,
+      // 'Block val size', val.contractData().val().toXDR().length
+
+      // 'Key size', res.key.toXDR().length,
+      // 'Val size', res.val.toXDR().length,
       console.log(
-        // res.val.toXDR('base64')
-
-        // 'Block key size', val.contractData().key().toXDR().length,
-        // 'Block val size', val.contractData().val().toXDR().length
-
-        // 'Key size', res.key.toXDR().length,
-        // 'Val size', res.val.toXDR().length,
-
         res.key.contractData().key().toXDR().length,
         res.val.contractData().val().toXDR().length
-        // res.val.contractData().key().toXDR().length,
-        // res.val.contractData().val().toXDR().length,
       );
-
+      // res.val.contractData().key().toXDR().length,
+      // res.val.contractData().val().toXDR().length,
       block = scValToNative(res.val.contractData().val());
     });
 
