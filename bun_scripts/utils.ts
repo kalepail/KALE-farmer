@@ -77,32 +77,32 @@ export async function getIndex() {
 }
 
 export async function getBlock(index: number) {
-    let block: Block | undefined;
+  let block: Block | undefined;
 
-    await rpc.getContractData(Bun.env.CONTRACT_ID, xdr.ScVal.scvVec([
-        xdr.ScVal.scvSymbol('Block'),
-        xdr.ScVal.scvU32(Number(index))
-    ]), Durability.Temporary)
-        .then((res) => {
+  await rpc.getContractData(Bun.env.CONTRACT_ID, xdr.ScVal.scvVec([
+      xdr.ScVal.scvSymbol('Block'),
+      xdr.ScVal.scvU32(Number(index))
+  ]), Durability.Temporary)
+      .then((res) => {
           console.log(
-            // res.val.toXDR('base64')
+              // res.val.toXDR('base64')
 
-            // 'Block key size', val.contractData().key().toXDR().length,
-            // 'Block val size', val.contractData().val().toXDR().length
+              // 'Block key size', val.contractData().key().toXDR().length,
+              // 'Block val size', val.contractData().val().toXDR().length
 
-            // 'Key size', res.key.toXDR().length,
-            // 'Val size', res.val.toXDR().length,
+              // 'Key size', res.key.toXDR().length,
+              // 'Val size', res.val.toXDR().length,
 
-            res.key.contractData().key().toXDR().length,
-            res.val.contractData().val().toXDR().length,
-            // res.val.contractData().key().toXDR().length,
-            // res.val.contractData().val().toXDR().length,
-        );
- 
-            block = scValToNative(res.val.contractData().val())
-        })
+              res.key.contractData().key().toXDR().length,
+              res.val.contractData().val().toXDR().length,
+              // res.val.contractData().key().toXDR().length,
+              // res.val.contractData().val().toXDR().length,
+          );
 
-    return block
+          block = scValToNative(res.val.contractData().val())
+      })
+
+  return block
 }
 
 export async function getPail(index: number) {
