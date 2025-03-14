@@ -1,0 +1,21 @@
+{
+  "name": "node_scripts",
+  "version": "1.0.0",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "farm": "node --import ./loader.mjs plant_and_work.ts",
+    "harvest": "node --import ./loader.mjs harvest.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^13.1.0",
+    "dotenv": "^16.4.7",
+    "kale-sc-sdk": "file:../ext/kale-sc-sdk"
+  }
+}
