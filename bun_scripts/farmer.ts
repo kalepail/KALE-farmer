@@ -1,6 +1,5 @@
 import { initialState } from './state';
 import { runCycle } from './farming';
-import { log } from './utils';
 
 // Start the farming loop
 const startFarming: StartFarmingFn = (state) => {
