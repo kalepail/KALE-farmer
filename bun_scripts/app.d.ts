@@ -13,6 +13,9 @@ declare module 'bun' {
     NONCE_COUNT: number;
     INDEX: number;
     WORK_WAIT_TIME: number;
+    MAX_ERROR_LIMIT: string; // Maximum allowed errors before shutdown
+    CHECK_EVERY_MS: string; // Interval to check for new blocks (ms)
+    HARVEST_DELAY_MS: string; // Delay before harvesting (ms)
   }
 }
 
@@ -62,17 +65,6 @@ declare global {
     timeDifference: number; // Time since block started (ms)
     minutesElapsed: number; // Minutes since block started
     secondsElapsed: number; // Seconds within the current minute
-  }
-
-  // Environment variables expected from .env
-  interface EnvConfig {
-    MAX_ERROR_LIMIT: string; // Maximum allowed errors before shutdown
-    CHECK_EVERY_MS: string; // Interval to check for new blocks (ms)
-    HARVEST_DELAY_MS: string; // Delay before harvesting (ms)
-    FARMER_PK: string; // Farmer's public key
-    WORK_WAIT_TIME: string; // Time to wait before starting work (ms)
-    NONCE_COUNT: string; // Number of nonces to process
-    STAKE_AMOUNT: string; // Amount to stake
   }
 
   // Function signatures
