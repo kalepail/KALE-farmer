@@ -15,26 +15,6 @@ import { version } from './package.json';
 
 const INDEX_filename = Bun.env.ENV === 'mainnet' ? '.INDEX' : '.INDEX.testnet';
 
-export interface Block {
-  timestamp?: bigint;
-  min_gap: bigint;
-  min_stake: bigint;
-  min_zeros: bigint;
-  max_gap: bigint;
-  max_stake: bigint;
-  max_zeros: bigint;
-  entropy?: Buffer;
-  staked_total?: bigint;
-  normalized_total?: bigint;
-}
-
-export interface Pail {
-  sequence: bigint;
-  gap: bigint | undefined;
-  stake: bigint;
-  zeros: bigint | undefined;
-}
-
 export const rpc = new Server(Bun.env.RPC_URL);
 export const farmerSigner = basicNodeSigner(
   Keypair.fromSecret(Bun.env.FARMER_SK),

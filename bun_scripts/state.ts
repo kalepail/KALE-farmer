@@ -1,5 +1,3 @@
-import type { FarmerState } from './types';
-
 // Initial state for the farmer
 export const initialState: FarmerState = {
   contractData: { index: 0, block: undefined, pail: undefined },

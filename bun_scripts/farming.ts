@@ -10,17 +10,6 @@ import {
 } from './utils';
 import { Keypair } from '@stellar/stellar-sdk/minimal';
 import { Api } from '@stellar/stellar-sdk/minimal/rpc';
-import type {
-  RunCycleFn,
-  ProcessNewBlockFn,
-  ShowStatusFn,
-  StartWorkFn,
-  HandleStreamFn,
-  HandleWorkErrorFn,
-  PlantFn,
-  HandlePlantErrorFn,
-  CalculateTimeFn,
-} from './types';
 
 // Run one cycle of farming
 export const runCycle: RunCycleFn = async (state) => {
@@ -132,16 +121,16 @@ export const showStatus: ShowStatusFn = (
   hasWorked,
   process
 ) => {
-  const time = `${minutes}m ${seconds}s`;
-  const status =
-    hasPlanted && hasWorked
-      ? `Finished farming block ${index}, waiting for next...`
-      : hasPlanted && process
-      ? `Working on block ${index}...`
-      : hasPlanted
-      ? `Growing block ${index}...`
-      : `Planting block ${index}...`;
-  log(status, time);
+  //   const time = `${minutes}m ${seconds}s`;
+  //   const status =
+  //     hasPlanted && hasWorked
+  //       ? `Finished farming block ${index}, waiting for next...`
+  //       : hasPlanted && process
+  //       ? `Working on block ${index}...`
+  //       : hasPlanted
+  //       ? `Growing block ${index}...`
+  //       : `Planting block ${index}...`;
+  //   log(status, time);
 };
 
 // Start the farming work
