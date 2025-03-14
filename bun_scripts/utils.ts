@@ -93,8 +93,8 @@ export async function getBlock(index: number) {
             // 'Key size', res.key.toXDR().length,
             // 'Val size', res.val.toXDR().length,
 
-            'Contract data','key',res.key.contractData().key().toXDR().length,'value',res.val.contractData().val().toXDR().length
-
+            'Contract data', 'Key', res.key.contractData().key().toXDR().length,
+            'Value', res.val.contractData().val().toXDR().length,
             // res.val.contractData().key().toXDR().length,
             // res.val.contractData().val().toXDR().length,
         );
