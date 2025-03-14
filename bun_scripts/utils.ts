@@ -127,8 +127,9 @@ export async function getContractData() {
     index = await getIndex();
     block = await getBlock(index);
     pail = await getPail(index);
-  } catch {}
-
+  } catch (err) {
+    log('Error getting contract data', err);
+  }
   return { index, block, pail };
 }
 
@@ -147,8 +148,8 @@ export async function writeINDEX(index: number) {
 }
 
 // New utility functions with side effects
-export const log = (...args: any[]) => console.log(...args);
-export const logError = (...args: any[]) => console.error(...args);
+export const log = (...args: unknown[]) => console.log(...args);
+export const logError = (...args: unknown[]) => console.error(...args);
 export const exit = (code: number) => process.exit(code);
-export const spawn = (args: string[], onMessage: (message: any) => void) =>
+export const spawn = (args: string[], onMessage: (message: unknown) => void) =>
   Bun.spawn(args, { ipc: onMessage, stdout: 'pipe' });

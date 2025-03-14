@@ -121,16 +121,16 @@ export const showStatus: ShowStatusFn = (
   hasWorked,
   process
 ) => {
-  //   const time = `${minutes}m ${seconds}s`;
-  //   const status =
-  //     hasPlanted && hasWorked
-  //       ? `Finished farming block ${index}, waiting for next...`
-  //       : hasPlanted && process
-  //       ? `Working on block ${index}...`
-  //       : hasPlanted
-  //       ? `Growing block ${index}...`
-  //       : `Planting block ${index}...`;
-  //   log(status, time);
+  const time = `${minutes}m ${seconds}s`;
+  const status =
+    hasPlanted && hasWorked
+      ? `Finished farming block ${index}, waiting for next...`
+      : hasPlanted && process
+      ? `Working on block ${index}...`
+      : hasPlanted
+      ? `Growing block ${index}...`
+      : `Planting block ${index}...`;
+  log(status, time);
 };
 
 // Start the farming work
@@ -146,7 +146,7 @@ export const startWork: StartWorkFn = async (
   if (
     currentState.process ||
     currentState.hasWorked ||
-    timeDifference < workWaitTime
+    timeDifference <= workWaitTime
   ) {
     return currentState;
   }
@@ -169,7 +169,9 @@ export const startWork: StartWorkFn = async (
       '--nonce-count',
       String(Bun.env.NONCE_COUNT),
     ],
-    () => {}
+    (err) => {
+      log('farmerProcess:', err);
+    }
   );
 
   currentState = { ...currentState, process: farmerProcess };
@@ -217,11 +219,11 @@ export const handleStream: HandleStreamFn = async (
     await send(workResult);
     log(
       'Work completed successfully',
-      `Gaps: ${workResult.result} | `,
-      `Zeros: ${zeroCount}`
+      `[Gaps: ${workResult.result} | Zeros: ${zeroCount}]`
     );
     return { ...state, hasWorked: true };
   } catch (err) {
+    log(err);
     return state; // Ignore parsing errors, keep state unchanged
   }
 };
@@ -251,7 +253,11 @@ export const plant: PlantFn = async (state) => {
     address: Bun.env.FARMER_PK,
     signAuthEntry: farmerSigner.signAuthEntry,
   });
-  await send(plantResult);
+  try {
+    await send(plantResult);
+  } catch (err) {
+    return handlePlantError(state, err);
+  }
   log('Planted successfully', Number(Bun.env.STAKE_AMOUNT || 0) / 1e7);
   return { ...state, hasPlanted: true };
 };
@@ -260,7 +266,7 @@ export const plant: PlantFn = async (state) => {
 export const handlePlantError: HandlePlantErrorFn = (state, error) => {
   if (error.includes('Error(Contract, #8)')) {
     log('Already planted');
-    return state;
+    return { ...state, hasPlanted: true };
   }
   logError('Planting failed:', error);
   return { ...state, errorCount: state.errorCount + 1 };

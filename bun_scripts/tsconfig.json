@@ -24,5 +24,4 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-    "include": ["app.d.ts"]
 }
