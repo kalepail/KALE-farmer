@@ -46,63 +46,63 @@ export async function send<T>(txn: AssembledTransaction<T> | Tx | string, fee?: 
 }
 
 export async function getIndex() {
-  let index: number = 0;
+    let index: number = 0;
 
-  await rpc.getContractData(
-      Bun.env.CONTRACT_ID,
-      xdr.ScVal.scvLedgerKeyContractInstance()
-  ).then(({ val }) =>
-      val.contractData()
-          .val()
-          .instance()
-          .storage()
-  ).then((storage) => {
-      return storage?.map((entry) => {
-          const key: string = scValToNative(entry.key())[0]
+    await rpc.getContractData(
+        Bun.env.CONTRACT_ID,
+        xdr.ScVal.scvLedgerKeyContractInstance()
+    ).then(({ val }) =>
+        val.contractData()
+            .val()
+            .instance()
+            .storage()
+    ).then((storage) => {
+        return storage?.map((entry) => {
+            const key: string = scValToNative(entry.key())[0]
 
-          if (key === 'FarmIndex') {
-              index = entry.val().u32()
-          }
+            if (key === 'FarmIndex') {
+                index = entry.val().u32()
+            }
 
-          // if (key === 'FarmBlock') {
-          //     console.log(
-          //         'FarmBlock',
-          //         scValToNative(entry.val())
-          //     );
-          // }
-      })
-  })
+            // if (key === 'FarmBlock') {
+            //     console.log(
+            //         'FarmBlock',
+            //         scValToNative(entry.val())
+            //     );
+            // }
+        })
+    })
 
-  return index;
+    return index;
 }
 
 export async function getBlock(index: number) {
-  let block: Block | undefined;
+    let block: Block | undefined;
 
-  await rpc.getContractData(Bun.env.CONTRACT_ID, xdr.ScVal.scvVec([
-      xdr.ScVal.scvSymbol('Block'),
-      xdr.ScVal.scvU32(Number(index))
-  ]), Durability.Temporary)
-      .then((res) => {
-          console.log(
-              // res.val.toXDR('base64')
+    await rpc.getContractData(Bun.env.CONTRACT_ID, xdr.ScVal.scvVec([
+        xdr.ScVal.scvSymbol('Block'),
+        xdr.ScVal.scvU32(Number(index))
+    ]), Durability.Temporary)
+        .then((res) => {
+            console.log(
+                // res.val.toXDR('base64')
 
-              // 'Block key size', val.contractData().key().toXDR().length,
-              // 'Block val size', val.contractData().val().toXDR().length
+                // 'Block key size', val.contractData().key().toXDR().length,
+                // 'Block val size', val.contractData().val().toXDR().length
 
-              // 'Key size', res.key.toXDR().length,
-              // 'Val size', res.val.toXDR().length,
+                // 'Key size', res.key.toXDR().length,
+                // 'Val size', res.val.toXDR().length,
 
-              res.key.contractData().key().toXDR().length,
-              res.val.contractData().val().toXDR().length,
-              // res.val.contractData().key().toXDR().length,
-              // res.val.contractData().val().toXDR().length,
-          );
+                res.key.contractData().key().toXDR().length,
+                res.val.contractData().val().toXDR().length,
+                // res.val.contractData().key().toXDR().length,
+                // res.val.contractData().val().toXDR().length,
+            );
 
-          block = scValToNative(res.val.contractData().val())
-      })
+            block = scValToNative(res.val.contractData().val())
+        })
 
-  return block
+    return block
 }
 
 export async function getPail(index: number) {
@@ -129,16 +129,14 @@ export async function getContractData() {
         index = await getIndex();
         block = await getBlock(index);
         pail = await getPail(index);
-    } catch {
+    }  catch (err){
       if(!pail){
         console.log("Fetching a new pail...")
       }
       else {
-        console.error("Error getting contract data", index, block, pail)
+        console.error("Error getting contract data", {err, index, block, pail})
       }
-
-     }
-
+    }
     return { index, block, pail }
 }
 
