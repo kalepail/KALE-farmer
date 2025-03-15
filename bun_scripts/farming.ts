@@ -75,7 +75,7 @@ const startWork: StartWorkFn = async (
   timeDifference: number
 ): Promise<FarmerState> => {
   let currentState = state.hasPlanted ? state : await plant(state);
-  const workWaitTime = Number(Bun.env.WORK_WAIT_TIME) || 240000;
+  const workWaitTime = Number(Bun.env.WORK_WAIT_TIME_MS) || 240000;
   if (currentState.process || currentState.hasWorked || timeDifference <= workWaitTime) return currentState;
 
   log('Starting work...', `${currentState.minutesElapsed}m ${currentState.secondsElapsed}s`, `Errors: ${currentState.errorCount}`);
@@ -114,7 +114,7 @@ const startWork: StartWorkFn = async (
           log('Work completed successfully', `[Gaps: ${workResult.result} | Zeros: ${zeroCount}]`);
           return { ...currentState, hasWorked: true };
         } catch (err) {
-          log('Error handling stream', err);
+          return handleError(state, JSON.stringify(err), 'Error Handling Stream')
         }
       }
     }

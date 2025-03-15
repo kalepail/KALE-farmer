@@ -12,7 +12,7 @@ declare module 'bun' {
     STAKE_AMOUNT: number;
     NONCE_COUNT: number;
     INDEX: number;
-    WORK_WAIT_TIME: number;
+    WORK_WAIT_TIME_MS: number;
     MAX_ERROR_LIMIT: string; // Maximum allowed errors before shutdown
     CHECK_EVERY_MS: string; // Interval to check for new blocks (ms)
     HARVEST_DELAY_MS: string; // Delay before harvesting (ms)
