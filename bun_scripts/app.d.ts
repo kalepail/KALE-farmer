@@ -19,8 +19,7 @@ declare module 'bun' {
   }
 }
 
-// Global type declarations for the app
-declare global {
+
   // Data from the contract
   interface ContractData {
     index: number; // Current block index
@@ -106,4 +105,4 @@ declare global {
     minutesElapsed: number;
     secondsElapsed: number;
   };
-}
+

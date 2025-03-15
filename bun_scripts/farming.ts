@@ -256,7 +256,7 @@ export const plant: PlantFn = async (state) => {
   try {
     await send(plantResult);
   } catch (err) {
-    return handlePlantError(state, err);
+    return handlePlantError(state, JSON.stringify(err));
   }
   log('Planted successfully', Number(Bun.env.STAKE_AMOUNT || 0) / 1e7);
   return { ...state, hasPlanted: true };
