@@ -7,26 +7,6 @@ import { version } from './package.json';
 
 const INDEX_filename = Bun.env.ENV === 'mainnet' ? '.INDEX' : '.INDEX.testnet';
 
-export interface Block {
-    timestamp?: bigint,
-    min_gap: number,
-    min_stake: bigint,
-    min_zeros: number,
-    max_gap: number,
-    max_stake: bigint,
-    max_zeros: number,
-    entropy?: Buffer,
-    staked_total?: bigint,
-    normalized_total?: bigint,
-}
-
-export interface Pail {
-    sequence: bigint,
-    gap: bigint | undefined,
-    stake: bigint,
-    zeros: bigint | undefined,
-}
-
 export const rpc = new Server(Bun.env.RPC_URL);
 export const farmerSigner = basicNodeSigner(Keypair.fromSecret(Bun.env.FARMER_SK), Bun.env.NETWORK_PASSPHRASE)
 
@@ -104,20 +84,20 @@ export async function getBlock(index: number) {
         xdr.ScVal.scvU32(Number(index))
     ]), Durability.Temporary)
         .then((res) => {
-            // console.log(
-            //     // res.val.toXDR('base64')
+            console.log(
+                // res.val.toXDR('base64')
 
-            //     // 'Block key size', val.contractData().key().toXDR().length,
-            //     // 'Block val size', val.contractData().val().toXDR().length
+                // 'Block key size', val.contractData().key().toXDR().length,
+                // 'Block val size', val.contractData().val().toXDR().length
 
-            //     // 'Key size', res.key.toXDR().length,
-            //     // 'Val size', res.val.toXDR().length,
+                // 'Key size', res.key.toXDR().length,
+                // 'Val size', res.val.toXDR().length,
 
-            //     res.key.contractData().key().toXDR().length,
-            //     res.val.contractData().val().toXDR().length,
-            //     // res.val.contractData().key().toXDR().length,
-            //     // res.val.contractData().val().toXDR().length,
-            // );
+                res.key.contractData().key().toXDR().length,
+                res.val.contractData().val().toXDR().length,
+                // res.val.contractData().key().toXDR().length,
+                // res.val.contractData().val().toXDR().length,
+            );
 
             block = scValToNative(res.val.contractData().val())
         })
@@ -149,8 +129,14 @@ export async function getContractData() {
         index = await getIndex();
         block = await getBlock(index);
         pail = await getPail(index);
-    } catch { }
-
+    }  catch (err){
+      if(!pail){
+        console.log("Fetching a new pail...")
+      }
+      else {
+        console.error("Error getting contract data", {err, index, block, pail})
+      }
+    }
     return { index, block, pail }
 }
 
@@ -167,3 +153,10 @@ export async function readINDEX() {
 export async function writeINDEX(index: number) {
     return Bun.write(INDEX_filename, index.toString());
 }
+
+// New utility functions with side effects
+export const log = (...args: unknown[]) => console.log(...args);
+export const logError = (...args: unknown[]) => console.error(...args);
+export const exit = (code: number) => process.exit(code);
+export const spawn = (args: string[], onMessage: (message: unknown) => void) =>
+  Bun.spawn(args, { ipc: onMessage, stdout: 'pipe' });

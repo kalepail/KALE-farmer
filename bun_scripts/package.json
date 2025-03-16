@@ -4,19 +4,25 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "farm": "bun run plant_and_work.ts",
-    "farm:testnet": "bun run --env-file=.env.testnet plant_and_work.ts",
+    "farm": "bun run farmer.ts",
+    "farm:testnet": "bun run --env-file=.env.testnet farmer.ts",
     "harvest": "bun run harvest.ts",
     "harvest:testnet": "bun run --env-file=.env.testnet harvest.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@eslint/js": "^9.22.0",
+    "@types/bun": "latest",
+    "globals": "^16.0.0",
+    "typescript-eslint": "^8.26.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^13.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
+    "eslint": "^9.22.0",
     "kale-sc-sdk": "file:../ext/kale-sc-sdk"
   }
 }
