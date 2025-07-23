@@ -18,7 +18,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@stellar/stellar-sdk": "^13.1.0",
+    "@stellar/stellar-sdk": "^14.0.0-rc.3",
     "chalk": "^5.4.1",
     "kale-sc-sdk": "file:../ext/kale-sc-sdk"
   }
