@@ -12,7 +12,7 @@ const { version } = JSON.parse(
   await fs.readFile(new URL("./package.json", import.meta.url), "utf8")
 );
 
-const INDEX_filename = process.env.ENV === 'mainnet' ? '.INDEX' : '.INDEX.testnet';
+const INDEX_filename = `.INDEX.${process.env.ENV}.${process.env.CONTRACT_ID}`;
 
 export interface Block {
     timestamp?: bigint,

@@ -42,19 +42,19 @@ async function run() {
 
     // TODO preemptive planting
 
-    // if (!planting && timeDiff >= 300000) {
-    //     planting = true;
-    //     console.log('Preemptive planting');
+    if (!planting && timeDiff >= 300000) {
+        planting = true;
+        console.log('Preemptive planting');
 
-    //     try {
-    //         await plant()
-    //     } finally {
-    //         planting = false;
-    //         return;
-    //     }
-    // } 
+        try {
+            await plant()
+        } finally {
+            planting = false;
+            return;
+        }
+    } 
 
-    // else 
+    else 
     if (index !== prev_index) {
         delete block?.timestamp;
         delete block?.entropy;

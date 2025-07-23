@@ -6,6 +6,7 @@
   "scripts": {
     "farm": "bun run plant_and_work.ts",
     "farm:testnet": "bun run --env-file=.env.testnet plant_and_work.ts",
+    "farm:futurenet": "bun run --env-file=.env.futurenet plant_and_work.ts",
     "farm:scheduled": "bun run farm_scheduled.ts",
     "harvest": "bun run harvest.ts",
     "harvest:testnet": "bun run --env-file=.env.testnet harvest.ts"

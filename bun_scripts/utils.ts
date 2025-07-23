@@ -5,7 +5,7 @@ import { Durability, Server } from "@stellar/stellar-sdk/minimal/rpc";
 import { Client } from 'kale-sc-sdk';
 import { version } from './package.json';
 
-const INDEX_filename = Bun.env.ENV === 'mainnet' ? '.INDEX' : '.INDEX.testnet';
+const INDEX_filename = `.INDEX.${Bun.env.ENV}.${Bun.env.CONTRACT_ID}`;
 
 export interface Block {
     timestamp?: bigint,
